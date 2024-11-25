@@ -1,0 +1,4 @@
+No ROMS are provided
+
+you can find some on: https://www.emulatorgames.net/roms/gameboy-advance/
+(currently supports: gba, snes, nes, genesis and n64)

@@ -1,0 +1,10 @@
+Goobus clicker
+made by goobus.. (you either know or dont)
+==========================================
+
+v3 - Autoclicker and Auto Gold update
+addded a autoclicker into the game so that instead of using a autoclicker
+you can just click a button to autoclick for you, you can now minimise the tab and continue autoclicking
+
+there is also auto gold, which just auto clicks gold cookies.
+Both of these are toggleable, so if you want a pure playthough then you can just not turn any of them on.

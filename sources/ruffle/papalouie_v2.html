@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html style="background-color: black; color: white;">
+<head> 
+    <script src="ruffle.js"></script>
+    <script type="text/javascript">
+        function init() {
+            window.RufflePlayer = window.RufflePlayer || {};
+            window.RufflePlayer.config = {
+                autoplay: true,
+                base: "./",
+                logLevel: "debug",
+                publicPath: "./",
+                showSwfDownload: true,
+                warnOnUnsupportedContent: false,
+            };
+
+            var container = document.getElementById("swfContainer");
+            var ruffle = window.RufflePlayer.newest();  
+            var player = ruffle.createPlayer();  
+
+            container.appendChild(player);  
+            
+            // Delay before loading SWF
+            setTimeout(() => {
+                player.load("./games/papalouie_v2.swf");
+            }, 500); // Adjust delay time if needed
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div id="swfContainer" style="width: 800px; height: 600px;"></div>
+</body>
+</html>

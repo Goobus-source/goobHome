@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <link rel="icon" type="image/x-icon" href="./icon.ico">
+    <title>GoobHome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./font-awesome.min.css">
+    <link rel="stylesheet" href="./w3.css">
+
+    <!-- the stylesheet (you should be able to find a filename called this from where you installed it, this controls how the webpage looks and also the crt effect on the top of the page) -->
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles2.css">
+
+    <!-- background (you can change the value inside "background-image") -->
+    <!-- simply just enter the images folder, place your wallpaper and change "./images/SK_region_art.png" to "./images/your_file_name.png"-->
+    <style>
+      body { 
+	      background-image: url("./images/SK_region_art.png");
+		    background-repeat: no-repeat;
+		    background-attachment: fixed;
+		    background-size: cover;
+		    background-size: 100% 100%;
+	    }
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- errm what the spruce?-->
+<!-- you can edit the website, i added a bunch of comments around the place so that its easier to read.-->
+<div class=crt>
+
+  <!-- upper area of the page, contains the weather, bookmarks and clock -->
+  <div id="search">
+    <input
+      id="search-field"
+      type="text"
+      name="search-field"
+      onkeypress="return search(event)"
+    />
+  </div>
+  <div class="container">
+    <div id="clock"></div>
+    <div class="weather-container">
+      <div class="row">
+        <div id="weather-description" class="inline"></div>
+        <div class="inline">-</div>
+        <div id="temp" class="inline"></div>
+      </div>
+    </div>
+    <div id="bookmark-container"></div>
+  </div>
+
+  <script src="bookmarks.js"></script>
+
+  <!-- Other functions -->
+  <script>
+    // I recommend you dont touch anything here as it could break the top of the website.
+    // if you know a bit of programming then this should be readable enough.
+
+    const searchUrl = "https://google.com/search?q=";
+
+    function search(e) {
+      if (e.keyCode == 13) {
+        var val = document.getElementById("search-field").value;
+        window.open(searchUrl + val);
+      }
+    }
+
+  
+    function getTime() {
+      let date = new Date(),
+        min = date.getMinutes(),
+        sec = date.getSeconds(),
+        hour = date.getHours();
+
+      return (
+        "" +
+        (hour < 10 ? "0" + hour : hour) +
+        ":" +
+        (min < 10 ? "0" + min : min) +
+        ":" +
+        (sec < 10 ? "0" + sec : sec)
+      );
+    }
+
+
+    function getWeather() {
+      let xhr = new XMLHttpRequest();
+
+      // Not my api key btw (so i didnt do a butter here.)
+      // yoinked it from somewhere :fire:
+      xhr.open(
+        "GET",
+        "http://api.openweathermap.org/data/2.5/weather?q=Willunga&units=metric&appid=e5b292ae2f9dae5f29e11499c2d82ece"
+		
+      );
+      xhr.onload = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            let json = JSON.parse(xhr.responseText);
+            document.getElementById("temp").innerHTML =
+              json.main.temp.toFixed(0) + " C";
+            document.getElementById("weather-description").innerHTML =
+              json.weather[0].description;
+          } else {
+            console.log("error msg: " + xhr.status);
+          }
+        }
+      };
+      xhr.send();
+    }
+
+  
+   
+    function setupBookmarks() {
+      const bookmarkContainer = document.getElementById("bookmark-container");
+      bookmarkContainer.innerHTML = bookmarks
+        .map((b) => {
+          const html = ["<div class='bookmark-set'>"];
+          html.push(`<div class="bookmark-title">${b.title}</div>`); 
+          html.push('<div class="bookmark-inner-container">');       
+          html.push(...b.links.map((l) => `<a class="bookmark" href="${l.url}" target="_blank">${l.name}</a>`));                                                          
+          html.push("</div></div>");
+          return html.join("");
+        }).join("");
+    }
+
+    window.onload = () => {
+      setupBookmarks();
+      getWeather();
+      document.getElementById("clock").innerHTML = getTime();
+      setInterval(() => {
+        document.getElementById("clock").innerHTML = getTime();
+      }, 100);
+    };
+
+    document.addEventListener("keyup", (event) => {
+      if (event.keyCode == 32) {
+        document.getElementById("search").style.display = "flex";
+        document.getElementById("search-field").focus();
+      } else if (event.keyCode == 27) {
+        document.getElementById("search-field").value = "";
+        document.getElementById("search-field").blur();
+        document.getElementById("search").style.display = "none";
+      }
+    });
+  </script>
+
+
+
+
+<script>
+
+  document.addEventListener("keydown", function(event) {
+      
+      if (event.key === "K" || event.key === "k") {
+          
+          const mainContainer = document.getElementById("main-container");
+          if (mainContainer) {
+            
+              mainContainer.remove();
+          }
+      }
+  });
+</script>
+
+
+
+
+
+      <!-- Epic games part (Outer wrapper) -->
+      <div id="wrapper">
+        <div class="w3-container w3-row w3-animate-top" id="header">
+        </div>
+        <!-- Hardcoded. i know, not the best way to do it. (Only reason for this is because not every local website is called "index.html" which makes it hard to just automatically find.) -->
+        <!-- each container contains one website link, if you wanted to add something just copy one and then change the a href to the local file you have. -->
+        <!-- it can also just be a normal link to a random website, but you could just add that to one of your bookmarks? -->
+        
+          <div class="w3-container" id="main-container">
+            <div class="w3-row-padding w3-margin-top">
+            
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/jinx/index.html" target="_blank">
+                    <img src="./images/jinx.png" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>J I N X</h3>
+                    <p>J   I    N   X.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/goofyjinx/index.html" target="_blank">
+                    <img src="./images/jinxstrech.png" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Strechy jinx</h3>
+                    <p>jinx but strechy?</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/goobclick/index.html" target="_blank">
+                    <img src="./images/bison.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Goobus clicker</h3>
+                    <p>Exactly the same as cookie clicker with some mods installed</p>
+                  </div>
+                </div>
+              </div>	
+			  
+			        <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/EaglercraftX_OFFLINE.html" target="_blank">
+                    <img src="./images/eagtek.png" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Eaglercraft</h3>
+                    <p>Minecraft 1.8 on running in a web browser</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/webretro-local/index.html" target="_blank">
+                    <img src="./images/ga.webp" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[Flash?] webretro-local</h3>
+                    <p>Supports GBA, Genesis, Nintendo 64, NES and SNES, you need to load your own roms</p>
+                  </div>
+                </div>
+              </div>	
+
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/JetpackJoyride/index.html" target="_blank">
+                    <img src="./images/je.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] jetpack joyride</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+			  
+
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/mario/index.html" target="_blank">
+                    <img src="./images/fu.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Fullscreen mario</h3>
+                    <p>Nes mario with some mods</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/flappy-bird/index.html" target="_blank">
+                    <img src="./images/bison.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Flappy bird</h3>
+                    <p>No comment</p>
+                  </div>
+                </div>
+              </div>
+
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/bloonstd/index.html" target="_blank">
+                    <img src="./images/bo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bloons TD</h3>
+                    <p>the first one</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/bloonstd2/index.html" target="_blank">
+                    <img src="./images/bo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bloons TD2</h3>
+                    <p>the SECOND one</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/bloonstd3/index.html" target="_blank">
+                    <img src="./images/bo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bloons TD3</h3>
+                    <p>We DO talk about the third one (finally added)</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ruffle/bloons4.html" target="_blank">
+                    <img src="./images/bo4.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bloons TD4</h3>
+                    <p>we dont talk about the third one.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/bloonstd5/index.html" target="_blank">
+                    <img src="./images/bo1.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bloons TD5</h3>
+                    <p>the bloons...</p>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/BurritoBison-main/index.html" target="_blank">
+                    <img src="./images/bison.jpgs" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Burrito Bison</h3>
+                    <p>No comment</p>
+                  </div>
+                </div>
+              </div>	
+
+          
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/getaway-shootout/index.html" target="_blank">
+                    <img src="./images/gs.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Getaway shootout</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/alienhominid/index.html" target="_blank">
+                    <img src="./images/ah.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] alien hominid</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/DogeMiner/index.html" target="_blank">
+                    <img src="./images/do.avif" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>doge miner</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+              
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ctr/index.html" target="_blank">
+                    <img src="./images/cr.avif" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Cut the Rope</h3>
+                    <p>whar</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/breakout/index.html" target="_blank">
+                    <img src="./images/ib.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>Idle Breakout</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/krunker/index.html" target="_blank">
+                    <img src="./images/kr.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Krunker</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ruffle/fancy.html" target="_blank">
+                    <img src="./images/fp.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Fancy Pants Adventure</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ovo/index.html" target="_blank">
+                    <img src="./images/ovo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] OVO</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/paperio2/index.html" target="_blank">
+                    <img src="./images/pa.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Paper Io 2</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/slope/index.html" target="_blank">
+                    <img src="./images/sl.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] slope</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/slope-2/index.html" target="_blank">
+                    <img src="./images/sl.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] slope (2 player)</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/subway-surfers/index.html" target="_blank">
+                    <img src="./images/su.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] subway surfers</h3>
+                    <p>i love brainrot</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/townscaper/index.html" target="_blank">
+                    <img src="./images/to.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] townscaper</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/papaspizzaria/index.html" target="_blank">
+                    <img src="./images/pi.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Papa's Pizzaria</h3>
+                    <p>Well at least it isn't freddy fazbear..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/papaspizzaria/index.html" target="_blank">
+                    <img src="./images/bur.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Papa's Burgeria</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ruffle/sonic.html" target="_blank">
+                    <img src="./images/so.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Ultimate Flash Sonic Widescreen</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/ruffle/jacksmith.html" target="_blank">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzs_duSnwLpZ2_0rDg7ui2cxPDeJ5h0ARqhA&s" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Jacksmith</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/vex3/index.html" target="_blank">
+                    <img src="./images/VE.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] vex 3</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/vex4/index.html" target="_blank">
+                    <img src="./images/VE.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] vex 4</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/vex5/index.html" target="_blank">
+                    <img src="./images/VE.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] vex 5</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/vex6/index.html" target="_blank">
+                    <img src="./images/VE.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] vex 6</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/vex7/index.html" target="_blank">
+                    <img src="./images/VE.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] vex 7</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/learntofly/index.html" target="_blank">
+                    <img src="./images/LearntoFly_OG-logo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] learn to fly</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/learntofly2/index.html" target="_blank">
+                    <img src="./images/LearntoFly_OG-logo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] learn to fly 2</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/stickman-hook/index.html" target="_blank">
+                    <img src="./images/st.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] stickman hook</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/bob-the-robber-2/index.html" target="_blank">
+                    <img src="./images/BobTheRobber_OG-logo.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Bob the robber (2)</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/moto-x3m/index.html" target="_blank">
+                    <img src="./images/moto.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] moto x3m</h3>
+                    <p>Placeholder text..</p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/pvz-main/index.html" target="_blank">
+                    <img src="./images/Plants_vs_Zombies_logo.png" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] PvZ</h3>
+                    <p>placeholder text... </p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/temple-run-2/index.html" target="_blank">
+                    <img src="./images/temp.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Temple Run 2</h3>
+                    <p>placeholder text... </p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/henrystick/1.html" target="_blank">
+                    <img src="./images/h1.webp" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Breaking the Bank </h3>
+                    <p>This is the greatest plan </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/henrystick/2.html" target="_blank">
+                    <img src="./images/h2.avif" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Escaping the Prison </h3>
+                    <p>This is the greatest plan </p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/henrystick/3.html" target="_blank">
+                    <img src="./images/h3.avif" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Stealing the Diamond </h3>
+                    <p>This is the greatest plan </p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/henrystick/4.html" target="_blank">
+                    <img src="./images/h4.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Infiltrating the Airship </h3>
+                    <p>This is the greatest plan </p>
+                  </div>
+                </div>
+              </div>	
+
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/henrystick/5.html" target="_blank">
+                    <img src="./images/h5.avif" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Fleeing the Complex </h3>
+                    <p>This is the greatest plan </p>
+                  </div>
+                </div>
+              </div>	
+
+
+
+          <!-- ends game list -->
+        </div>
+      </div>
+    
+<style>
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+footer{
+    background-color: #111;
+}
+.footerContainer{
+    width: 100%;
+    padding: 70px 30px 20px ;
+    padding-top: 20px;
+}
+.socialIcons{
+    display: flex;
+    justify-content: center;
+}
+.socialIcons a{
+    text-decoration: none;
+    padding:  10px;
+    background-color: white;
+    margin: 10px;
+    border-radius: 50%;
+}
+.socialIcons a i{
+    font-size: 2em;
+    color: black;
+    opacity: 0,9;
+}
+/* Hover affect on social media icon */
+.socialIcons a:hover{
+    background-color: #111;
+    transition: 0.5s;
+}
+.socialIcons a:hover i{
+    color: white;
+    transition: 0.5s;
+}
+.footerNav{
+    margin: 30px 0;
+}
+.footerNav ul{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+}
+.footerNav ul li a{
+    color:white;
+    margin: 20px;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 0.7;
+    transition: 0.5s;
+
+}
+.footerNav ul li a:hover{
+    opacity: 1;
+}
+.footerBottom{
+    background-color: #000;
+    padding: 20px;
+    text-align: center;
+}
+.footerBottom p{
+    color: white;
+}
+.designer{
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+    margin: 0px 5px;
+}
+@media (max-width: 700px){
+    .footerNav ul{
+        flex-direction: column;
+    } 
+    .footerNav ul li{
+        width:100%;
+        text-align: center;
+        margin: 10px;
+    }
+    .socialIcons a{
+        padding: 8px;
+        margin: 4px;
+    }
+}
+
+.white-text {
+    color: white;
+}
+
+
+.footerNav ul {
+    list-style-type: none; 
+    padding: 0;
+    display: flex; 
+    gap: 2px; 
+  }
+
+  .footerNav li {
+    margin: 0 5px; 
+  }
+
+</style>
+          <footer>
+            <div class="w3-container w3-row w3-animate-top" id="header">
+            </div>
+            <div class="footerContainer">
+                <p class="white-text" >You have reached the bottom of the page, what the hecking heck..</p>
+                <div class="footerNav">
+                  <!-- BUTTON LIST!!!!!!!!!!!     you can find some on https://buttoncollection.neocities.org/, or https://buttonwall.neocities.org/, -->
+                    <ul>
+                      <li><img src="./images/bu/ieexplode -1-.gif"></li>
+                      <li><img src="./images/bu/browser013.gif"></li>
+                      <li><img src="./images/bu/HORSES.gif"></li>
+                      <li><img src="./images/bu/internetarchive.gif"></li>
+                      <li><img src="./images/bu/midi_files_now.gif"></li>
+                      <li><img src="./images/bu/neocities.gif"></li>
+                      <li><img src="./images/bu/bookmark_this_page.gif"></li>
+                      <li><img src="./images/bu/nintendo-hh-gba.png"></li>
+                      <li><img src="./images/bu/hl.gif"></li>
+                      <li><img src="./images/bu/tumblr_inline_p0bn6sbzDa1ty2vf6_500.gif"></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="footerBottom">
+                <p>V1.0 GoobHome</p>
+            </div>
+
+<!-- end crt effect -->
+</div>
+</body>

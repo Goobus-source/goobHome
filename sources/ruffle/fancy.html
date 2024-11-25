@@ -1,0 +1,33 @@
+<html style="background-color: black; color: white;">
+<head> 
+    <script src="ruffle.js"></script>
+    <script type="text/javascript">
+        function init() {
+            
+            
+            // Ensure Ruffle configuration is set before creating the player
+            window.RufflePlayer = window.RufflePlayer || {};
+            window.RufflePlayer.config = {
+                autoplay: true,
+                base: "./",
+                logLevel: "error",
+                publicPath: "./",
+                showSwfDownload: true,
+                warnOnUnsupportedContent: false,
+            };
+
+            var container = document.getElementById("swfContainer");
+            var ruffle = window.RufflePlayer.newest();  
+            var player = ruffle.createPlayer();  
+
+            container.appendChild(player);  
+
+            player.load("./fancypantsadventure.swf");
+        }
+    </script>
+    
+</head>
+<body onload="init()">
+    <div id="swfContainer"></div> 
+</body>
+</html>
