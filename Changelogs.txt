@@ -1,0 +1,11 @@
+== v1.0 ==
+The first release on GitHub, core functions (bookmarks, weather, time)
+(48 containers)
+
+== v1.1 ==
+Added a settings.html page which allows the users to customise goobHome however they want
+Also added a function to export and import themes.
+
+Combined styles.css and styles2.css into one document for easier management
+Also added another enable flash for edge
+(49 containers)

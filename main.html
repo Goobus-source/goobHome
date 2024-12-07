@@ -6,15 +6,15 @@
 	  <link rel="icon" type="image/x-icon" href="./icon.ico">
     <title>GoobHome</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./font-awesome.min.css">
-    <link rel="stylesheet" href="./w3.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/w3.css">
 
     <!-- the stylesheet (you should be able to find a filename called this from where you installed it, this controls how the webpage looks and also the crt effect on the top of the page) -->
-    <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./styles2.css">
+    <link rel="stylesheet" href="./css/styles.css">
 
     <!-- background (you can change the value inside "background-image") -->
     <!-- simply just enter the images folder, place your wallpaper and change "./images/SK_region_art.png" to "./images/your_file_name.png"-->
+    <!-- the other way is just to use the settings page (you can find it in settings.html), it has a bit more a limit on the size of the image which is kinda mid, but just replacing it here has no limit-->
     <style>
       body { 
 	      background-image: url("./images/SK_region_art.png");
@@ -24,10 +24,95 @@
 		    background-size: 100% 100%;
 	    }
     </style>
+
+
+<!-- this part is for overrides from the setting page, the top part manually sets a bunch of stuff, but if any changes are detected on your local storage, it changes it to whatever you stored in there.-->
+<script>
+  
+  const openDB = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('wallpaperDB', 1);
+
+      request.onerror = () => reject("Error opening IndexedDB");
+      request.onsuccess = (event) => resolve(event.target.result);
+    });
+  };
+
+  const getWallpaper = async () => {
+    const db = await openDB();
+    const transaction = db.transaction('wallpapers', 'readonly');
+    const store = transaction.objectStore('wallpapers');
+    const request = store.get(1);
+
+    request.onsuccess = (event) => {
+      const data = event.target.result;
+      if (data && data.image) {
+        document.body.style.backgroundImage = `url(${data.image})`;
+      } else {
+        document.body.style.backgroundColor = '#f0f0f0'; 
+      }
+    };
+  };
+
+  
+  const openColorSchemeDB = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('colorSchemeDB', 1);
+  
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('colorSchemes')) {
+          db.createObjectStore('colorSchemes', { keyPath: 'id' });
+        }
+      };
+  
+      request.onerror = () => reject("Error opening color scheme IndexedDB");
+      request.onsuccess = (event) => resolve(event.target.result);
+    });
+  };
+  
+  
+  const getColorScheme = async () => {
+  const db = await openColorSchemeDB();
+  const transaction = db.transaction('colorSchemes', 'readonly');
+  const store = transaction.objectStore('colorSchemes');
+  const request = store.get(1);
+
+  request.onsuccess = (event) => {
+    const data = event.target.result;
+    if (data) {
+      document.documentElement.style.setProperty('--fg', data.textColor || '#ffffff');
+      document.documentElement.style.setProperty('--containerBg', data.containerColor || '#272727');
+      document.documentElement.style.setProperty('--secondaryFg', data.secondaryFg || '#b3b3b3');  // Apply saved secondaryFg color
+
+      document.getElementById('textColor').value = data.textColor || '#ffffff';
+      document.getElementById('containerColor').value = data.containerColor || '#272727';
+      document.getElementById('secondaryFg').value = data.secondaryFg || '#b3b3b3';  // Apply saved secondaryFg color
+    }
+  };
+};
+
+  
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    getColorScheme();
+    getWallpaper();
+  });
+
+
+  
+</script>
+
+
+  
+
+
 </head>
 
 
 <body>
+
+  
 
 
 <!-- errm what the spruce?-->
@@ -770,9 +855,24 @@
               </div>	
 
 
+              <div class="w3-third">
+                <div class="w3-card-4" style="background-color:#272727">
+                  <a href="./sources/Five-Nights-at-Freddys-Web-main/public/index.html" target="_blank">
+                    <img src="./images/fredrick.jpg" alt="" height="100%" width="100%">
+                  </a>
+                  <div class="w3-container" id="card-text">
+                    <h3>[FLASH] Fnaf 1 </h3>
+                    <p>hor hor hor hor </p>
+                  </div>
+                </div>
+              </div>	
+
+
 
           <!-- ends game list -->
         </div>
+        
+
       </div>
     
 <style>
@@ -886,7 +986,7 @@ footer{
             <div class="w3-container w3-row w3-animate-top" id="header">
             </div>
             <div class="footerContainer">
-                <p class="white-text" >You have reached the bottom of the page, what the hecking heck..</p>
+                <p class="white-text" >You have reached the bottom of the page, what the hecking heck.. (You are currently on main.html, Settings page is <a href="./settings.html">Here</a>)</p>
                 <div class="footerNav">
                   <!-- BUTTON LIST!!!!!!!!!!!     you can find some on https://buttoncollection.neocities.org/, or https://buttonwall.neocities.org/, -->
                     <ul>
@@ -906,9 +1006,11 @@ footer{
                 
             </div>
             <div class="footerBottom">
-                <p>V1.0 GoobHome</p>
+                <p>V1.1 GoobHome</p>
             </div>
 
 <!-- end crt effect -->
 </div>
+
+
 </body>

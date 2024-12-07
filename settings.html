@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <link rel="icon" type="image/x-icon" href="./icon.ico">
+    <title>GoobHome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/w3.css">
+
+    <!-- the stylesheet (you should be able to find a filename called this from where you installed it, this controls how the webpage looks and also the crt effect on the top of the page) -->
+    <link rel="stylesheet" href="./css/styles.css">
+
+
+    <!-- background (you can change the value inside "background-image") -->
+    <!-- simply just enter the images folder, place your wallpaper and change "./images/SK_region_art.png" to "./images/your_file_name.png"-->
+    <style>
+      body { 
+	      background-image: url("./images/waves.gif");
+		    background-repeat: no-repeat;
+		    background-attachment: fixed;
+		    background-size: cover;
+		    background-size: 100% 100%;
+	    }
+    </style>
+</head>
+
+
+<body>
+
+  
+
+
+<!-- errm what the spruce?-->
+<!-- you can edit the website, i added a bunch of comments around the place so that its easier to read.-->
+<div class=crt>
+    <audio autoplay>
+        <source src="./images/su/whar.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+  <!-- upper area of the page, contains the weather, bookmarks and clock -->
+  <div id="search">
+    <input
+      id="search-field"
+      type="text"
+      name="search-field"
+      onkeypress="return search(event)"
+    />
+  </div>
+  <div class="container">
+    <div id="clock"></div>
+    <div class="weather-container">
+      <h3>Settings</h3>
+      <p>------------------------</p>
+      <ul>
+        <li><p>Wallpaper: </p> 
+        <input type="file" id="wallpaperInput" accept="image/*">
+        <button id="saveButton">Save Wallpaper</button>
+        
+        </li>
+        <li><p>------------------------</p></li>
+
+        <li><p>Colour Scheme: </p> 
+        <ul>
+         
+
+        <li>
+          <p class="bookmark">Text Colour: <input type="color" id="textColor" value="#ffffff"></p>
+        </li>
+
+        <li>
+          <p class="bookmark">Bookmark Text Colour: <input type="color" id="secondaryFg" value="#b3b3b3"></p>
+        </li>
+
+         <li>
+          <p class="bookmark">Container Colour: <input type="color" id="containerColor" value="#272727"></p>
+        </li>
+
+        
+
+         
+
+        </ul>
+
+        <button id="saveSettings">Save Settings</button>
+            
+        </li>
+        <li><p>------------------------</p></li>
+        
+
+        
+      </ul>
+      <button id="importData">Import Theme</button>
+      <button id="exportData">Export Theme</button>
+      <button id="resetSettings">Reset to Default</button>
+
+
+      
+    
+   
+    </div>
+    
+    
+  </div>
+  <div id="wrapper">
+    <div class="w3-container w3-row w3-animate-top" id="header">
+    </div>
+
+    
+      <div class="w3-container" id="main-container">
+        <div class="w3-row-padding w3-margin-top">
+        
+          <div class="w3-third">
+            <div class="w3-card-4">
+              <a href="./main.html" target="_blank">
+                <img src="./images/jinx.png" alt="" height="100%" width="100%">
+              </a>
+              <div class="w3-container" id="card-text">
+                <h3>Example container</h3>
+                <p>Clicking on this will just take you back to main.html</p>
+              </div>
+            </div>
+          </div>
+  </div>
+  
+
+
+<!-- wallpaper -->
+  <script>
+    
+    const openDB = () => {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('wallpaperDB', 1);
+
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('wallpapers')) {
+            db.createObjectStore('wallpapers', { keyPath: 'id' });
+          }
+        };
+
+        request.onerror = () => reject("Error opening IndexedDB");
+        request.onsuccess = (event) => resolve(event.target.result);
+      });
+    };
+
+    const saveWallpaper = async (imageData) => {
+      const db = await openDB();
+      const transaction = db.transaction('wallpapers', 'readwrite');
+      const store = transaction.objectStore('wallpapers');
+      store.put({ id: 1, image: imageData });
+      transaction.oncomplete = () => alert("Wallpaper saved!");
+    };
+
+    // Handle the file input and save the wallpaper
+    const saveButton = document.getElementById('saveButton');
+    const wallpaperInput = document.getElementById('wallpaperInput');
+
+    saveButton.addEventListener('click', () => {
+      const file = wallpaperInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageUrl = event.target.result;
+          saveWallpaper(imageUrl);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select a wallpaper image first.');
+      }
+    });
+
+
+    const getWallpaper = async () => {
+      const db = await openDB();
+      const transaction = db.transaction('wallpapers', 'readonly');
+      const store = transaction.objectStore('wallpapers');
+      const request = store.get(1);
+
+      request.onsuccess = (event) => {
+        const data = event.target.result;
+        if (data && data.image) {
+          document.body.style.backgroundImage = `url(${data.image})`;
+        } else {
+          document.body.style.backgroundColor = '#f0f0f0'; 
+        }
+      };
+    };
+
+    getWallpaper();
+
+
+
+</script>
+
+
+<!-- colour scheme (had to use color because for some reason thats the STANDARD and would break if i simply put in Colour, the PROPER spelling)-->
+<!-- American English.. even though everyone else uses colour-->
+<script>
+const openColorSchemeDB = () => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('colorSchemeDB', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('colorSchemes')) {
+        db.createObjectStore('colorSchemes', { keyPath: 'id' });
+      }
+    };
+
+    request.onerror = () => reject("Error opening color scheme IndexedDB");
+    request.onsuccess = (event) => resolve(event.target.result);
+  });
+};
+
+const saveColorScheme = async (textColor, containerColor, secondaryFg) => {
+  const db = await openColorSchemeDB();
+  const transaction = db.transaction('colorSchemes', 'readwrite');
+  const store = transaction.objectStore('colorSchemes');
+  store.put({
+    id: 1,
+    textColor,
+    containerColor,
+    secondaryFg  
+  });
+  transaction.oncomplete = () => alert("Color scheme saved!");
+};
+
+const getColorScheme = async () => {
+  const db = await openColorSchemeDB();
+  const transaction = db.transaction('colorSchemes', 'readonly');
+  const store = transaction.objectStore('colorSchemes');
+  const request = store.get(1);
+
+  request.onsuccess = (event) => {
+    const data = event.target.result;
+    if (data) {
+     
+      document.documentElement.style.setProperty('--fg', data.textColor || '#ffffff');
+      document.documentElement.style.setProperty('--containerBg', data.containerColor || '#272727');
+      document.documentElement.style.setProperty('--secondaryFg', data.secondaryFg || '#b3b3b3'); 
+
+
+      document.getElementById('textColor').value = data.textColor || '#ffffff';
+      document.getElementById('containerColor').value = data.containerColor || '#272727';
+      document.getElementById('secondaryFg').value = data.secondaryFg || '#b3b3b3';  
+    }
+  };
+};
+
+
+const updateColor = (event, cssVariable) => {
+  const color = event.target.value;
+  document.documentElement.style.setProperty(cssVariable, color);
+};
+
+
+const textColorInput = document.getElementById('textColor');
+const containerColorInput = document.getElementById('containerColor');
+const secondaryFgInput = document.getElementById('secondaryFg');
+
+
+textColorInput.addEventListener('input', (event) => updateColor(event, '--fg'));
+containerColorInput.addEventListener('input', (event) => updateColor(event, '--containerBg'));
+secondaryFgInput.addEventListener('input', (event) => updateColor(event, '--secondaryFg'));
+
+
+const saveSettingsButton2 = document.getElementById('saveSettings');
+saveSettingsButton2.addEventListener('click', () => {
+  const textColor = textColorInput.value;
+  const containerColor = containerColorInput.value;
+  const secondaryFg = secondaryFgInput.value; 
+
+  saveColorScheme(textColor, containerColor, secondaryFg);
+});
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  getColorScheme();
+});
+
+
+
+// Reset to default part
+const resetSettingsButton = document.getElementById('resetSettings');
+resetSettingsButton.addEventListener('click', async () => {
+
+  const confirmReset = confirm('Are you sure you want to reset to default settings? Pretty much everything you set here will be gone.');
+
+  if (confirmReset) {
+    const colorSchemeRequest = indexedDB.deleteDatabase('colorSchemeDB');
+    const wallpaperRequest = indexedDB.deleteDatabase('wallpaperDB');
+    
+
+    colorSchemeRequest.onsuccess = () => {
+      wallpaperRequest.onsuccess = () => {
+
+        document.documentElement.style.setProperty('--fg', '#ffffff');
+        document.documentElement.style.setProperty('--containerBg', '#272727');
+        document.documentElement.style.setProperty('--secondaryFg', '#b3b3b3');
+
+
+        textColorInput.value = '#ffffff';
+        containerColorInput.value = '#272727';
+        secondaryFgInput.value = '#b3b3b3';
+
+        document.body.style.backgroundImage = ''
+
+        alert('Everything has been reset.');
+      };
+      wallpaperRequest.onerror = () => alert('Error deleting wallpaper database.');
+    };
+    
+    colorSchemeRequest.onerror = () => alert('Error resetting color scheme');
+  } else {
+    alert('Reset cancelled.');
+  }
+});
+
+
+</script>
+  
+
+
+<!-- This part is the import/export function for themes -->
+<script>
+  // Export stuff
+  const exportDataButton = document.getElementById('exportData');
+  exportDataButton.addEventListener('click', async () => {
+    const wallpaperData = await getWallpaperData();
+    const colorSchemeData = await getColorSchemeData();
+
+  
+    const textColor = textColorInput.value;
+    const containerColor = containerColorInput.value;
+    const secondaryFg = secondaryFgInput.value;
+
+    const themeData = {
+      WallpaperDB: {
+        wallpaper: wallpaperData
+      },
+      colorSchemeDB: {
+        textColor: textColor,
+        containerColor: containerColor,
+        secondaryFg: secondaryFg
+      }
+    };
+  
+    const json = JSON.stringify(themeData, null, 2); 
+  
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'GoobHome_Extract.whar'; 
+    link.click();
+  
+    URL.revokeObjectURL(url);
+  });
+  
+  
+  
+
+  const getWallpaperData = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('wallpaperDB', 1);
+  
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction('wallpapers', 'readonly');
+        const store = transaction.objectStore('wallpapers');
+        const getRequest = store.getAll();
+  
+        getRequest.onsuccess = () => resolve(getRequest.result);
+        getRequest.onerror = (err) => reject('Error fetching wallpaper data: ' + err);
+      };
+  
+      request.onerror = () => reject('Error opening wallpaperDB');
+    });
+  };
+  
+
+  const getColorSchemeData = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('colorSchemeDB', 1);
+  
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction('colorSchemes', 'readonly');
+        const store = transaction.objectStore('colorSchemes');
+        const getRequest = store.get(1);
+  
+        getRequest.onsuccess = () => resolve(getRequest.result || {});
+        getRequest.onerror = (err) => reject('Error fetching color scheme data: ' + err);
+      };
+  
+      request.onerror = () => reject('Error opening colorSchemeDB');
+    });
+  };
+
+
+  const openWallpaperDB = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('wallpaperDB', 1);
+  
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = () => reject('Error opening wallpaperDB');
+    });
+  };
+  
+  const openColorSchemeDB2 = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('colorSchemeDB', 1);
+  
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = () => reject('Error opening colorSchemeDB');
+    });
+  };
+
+  
+  // Import section
+  const importDataButton = document.getElementById('importData');
+  importDataButton.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.whar';
+    input.click();
+
+    input.onchange = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const themeData = await readFile(file);
+        await importWallpaperData(themeData.WallpaperDB.wallpaper);
+        await importColorSchemeData(themeData.colorSchemeDB);
+        alert('Theme imported successfully!');
+        location.reload(); 
+      } catch (error) {
+        alert('Error importing data: ' + error.message);
+      }
+    };
+  });
+
+  // Read and parse the file
+  const readFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const json = JSON.parse(event.target.result);
+          resolve(json);
+        } catch (error) {
+          reject('Error parsing the theme data');
+        }
+      };
+      reader.onerror = () => reject('Error reading the file');
+      reader.readAsText(file);
+    });
+  };
+
+
+  const importWallpaperData = (wallpaperData) => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('wallpaperDB', 1);
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction('wallpapers', 'readwrite');
+        const store = transaction.objectStore('wallpapers');
+        wallpaperData.forEach((wallpaper) => store.put(wallpaper));
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = (err) => reject('Error importing wallpaper data: ' + err);
+      };
+      request.onerror = () => reject('Error opening wallpaperDB');
+    });
+  };
+
+
+  const importColorSchemeData = (colorSchemeData) => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('colorSchemeDB', 1);
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction('colorSchemes', 'readwrite');
+        const store = transaction.objectStore('colorSchemes');
+        store.put({
+          id: 1,
+          ...colorSchemeData,
+        });
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = (err) => reject('Error importing color scheme data: ' + err);
+      };
+      request.onerror = () => reject('Error opening colorSchemeDB');
+    });
+  };
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+</div>
+<style>
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+footer{
+    background-color: #111;
+}
+.footerContainer{
+    width: 100%;
+    padding: 70px 30px 20px ;
+    padding-top: 20px;
+}
+.socialIcons{
+    display: flex;
+    justify-content: center;
+}
+.socialIcons a{
+    text-decoration: none;
+    padding:  10px;
+    background-color: white;
+    margin: 10px;
+    border-radius: 50%;
+}
+.socialIcons a i{
+    font-size: 2em;
+    color: black;
+    opacity: 0,9;
+}
+/* Hover affect on social media icon */
+.socialIcons a:hover{
+    background-color: #111;
+    transition: 0.5s;
+}
+.socialIcons a:hover i{
+    color: white;
+    transition: 0.5s;
+}
+.footerNav{
+    margin: 30px 0;
+}
+.footerNav ul{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+}
+.footerNav ul li a{
+    color:white;
+    margin: 20px;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 0.7;
+    transition: 0.5s;
+
+}
+.footerNav ul li a:hover{
+    opacity: 1;
+}
+.footerBottom{
+    background-color: #000;
+    padding: 20px;
+    text-align: center;
+}
+.footerBottom p{
+    color: white;
+}
+.designer{
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+    margin: 0px 5px;
+}
+@media (max-width: 700px){
+    .footerNav ul{
+        flex-direction: column;
+    } 
+    .footerNav ul li{
+        width:100%;
+        text-align: center;
+        margin: 10px;
+    }
+    .socialIcons a{
+        padding: 8px;
+        margin: 4px;
+    }
+}
+
+.white-text {
+    color: white;
+}
+
+
+.footerNav ul {
+    list-style-type: none; 
+    padding: 0;
+    display: flex; 
+    gap: 2px; 
+  }
+
+  .footerNav li {
+    margin: 0 5px; 
+  }
+
+</style>
+
+
+
+          <footer>
+            <div class="w3-container w3-row w3-animate-top" id="header">
+            </div>
+            <div class="footerContainer">
+                <p class="white-text" >Settings page, Return <a href="./main.html">Here</a></p>
+                <div class="footerNav">
+                  <!-- BUTTON LIST!!!!!!!!!!!     you can find some on https://buttoncollection.neocities.org/, or https://buttonwall.neocities.org/, -->
+                    <ul>
+                      <li><img src="./images/bu/ieexplode -1-.gif"></li>
+                      <li><img src="./images/bu/browser013.gif"></li>
+                      <li><img src="./images/bu/HORSES.gif"></li>
+                      <li><img src="./images/bu/internetarchive.gif"></li>
+                      <li><img src="./images/bu/midi_files_now.gif"></li>
+                      <li><img src="./images/bu/neocities.gif"></li>
+                      <li><img src="./images/bu/bookmark_this_page.gif"></li>
+                      <li><img src="./images/bu/nintendo-hh-gba.png"></li>
+                      <li><img src="./images/bu/hl.gif"></li>
+                      <li><img src="./images/bu/tumblr_inline_p0bn6sbzDa1ty2vf6_500.gif"></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="footerBottom">
+                <p>V1.1 GoobHome</p>
+            </div>
+
+<!-- end crt effect -->
+</div>
+</body>
