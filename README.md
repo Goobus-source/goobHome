@@ -1,6 +1,4 @@
-Funny goobHome 
-
-** how to use ** 
+# How to use 
 Pretty much to start using this just open the "main.html" file, your chosen web browser will 
 run the file and you will see the "website" which is stored all locally within your computer
 It will be running on file:// instead of https://.
@@ -12,14 +10,14 @@ Games are contained at the bottom of the webpage (just scroll down)
 
 
 
-** what is goobHome? **
-goobhome is simply just a homepage for users to use when using their web-browser, quick and easy access
+# What is goobHome? 
+goobHome is simply just a homepage for users to use when using their web-browser, quick and easy access
 to the time, weather and their own bookmarks
 
 
 
 
-** enabling flash **
+# Enabling flash 
 Enabling flash locally was a bit of a challenge 
 (There was no other work around to get ruffle or any unity game to work otherwise.)
 
@@ -38,7 +36,7 @@ If the shortcut isn't working for some reason, just add this to the "Target" in 
 
 
 
-** other features **
+# Other features 
 By pressing "K" you will remove the entire lower part (removing the games section until you reload)
 
 "Space" will open a search bar to simply just search on google
